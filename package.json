@@ -1,6 +1,5 @@
 {
   "name": "login-app",
-  "homepage": "https://NaveenKumarpai.github.io/Project",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -53,7 +52,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.18.6",
-    "gh-pages": "^5.0.0"
+    "@babel/preset-react": "^7.18.6"
   }
 }
