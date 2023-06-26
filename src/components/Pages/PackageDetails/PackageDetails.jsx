@@ -111,7 +111,7 @@ const PackageDetails = ({ server_key, tokenu, id }) => {
           <h3>{name}</h3>
           <p>6 months package</p>
           <h3>{amount}</h3>
-          <button onClick={() => handleRazorpayPayment(amount, "NaveenKumar", "naveen.paidipamula@gmail.com", "9160156140")}>
+          <button onClick={() => handleRazorpayPayment(amount, "TEST INTELLIGENTLY LLP", "naveen.paidipamula@gmail.com", "9987456321")}>
             Pay 
           </button>
         </div>
@@ -119,7 +119,7 @@ const PackageDetails = ({ server_key, tokenu, id }) => {
           <h3>{name}</h3>
           <p>1 Year package</p>
           <h3>{amount1}</h3>
-          <button onClick={() => handleRazorpayPayment(amount1, "NaveenKumar", "naveen.paidipamula@gmail.com", "9160156140")}>
+          <button onClick={() => handleRazorpayPayment(amount1, "TEST INTELLIGENTLY LLP", "naveen.paidipamula@gmail.com", "9987456321")}>
             Pay 
           </button>
         </div>
