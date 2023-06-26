@@ -1,0 +1,17 @@
+.premium {
+    display: flex;
+    justify-content: space-around;
+  }
+  .premium1 {
+    background-color: grey;
+    height: 300px;
+    width: 60vh;
+    text-align: center;
+    color: white;
+  }
+  .premium2{
+    background-color: rgb(230, 230, 224);
+    height: 300px;
+    width: 60vh;
+    text-align: center;
+  }

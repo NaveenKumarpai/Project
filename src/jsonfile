@@ -1,0 +1,741 @@
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import { Link, useParams } from 'react-router-dom';
+// import './Questions.css';
+// import ExamHeader from '../../Header/ExamHeader';
+
+// const Questions = ({ id, tokenu, server_key }) => {
+//   const { examId } = useParams();
+//   const [questions, setQuestions] = useState([]);
+//   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+//   const [selectedOptions, setSelectedOptions] = useState({});
+  
+//   useEffect(() => {
+//     const fetchQuestions = async () => {
+//       try {
+//         const response = await axios.get(`https://test.e-prathibha.com/apis/start_exam?examId=${examId}`, {
+//           headers: {
+//             id: id,
+//             server_key: server_key,
+//             tokenu: tokenu,
+//           },
+//         });
+//         setQuestions(response.data.data.exam);
+//         console.log(response.data);
+      
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+    
+//     fetchQuestions();
+//   }, [id, tokenu, server_key, examId]);
+
+//   const handleOptionClick = (option) => {
+//     setSelectedOptions((prevOptions) => ({
+//       ...prevOptions,
+//       [currentQuestionIndex]: option,
+//     }));
+//   };
+
+//   const handleNextQuestion = () => {
+//     const currentSelectedOption = getCurrentSelectedOption();
+    
+//     if (!currentSelectedOption) {
+//       const confirmNext = window.confirm('Are you sure you want to next question?');
+      
+//       if (!confirmNext) {
+//         return;
+//       }
+//     }
+    
+//     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+//   };
+
+//   const handlePreviousQuestion = () => {
+//     setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
+//   };
+
+//   const handleFinishExam = () => {
+//     const data = {
+//       examId: examId,
+//       qno: 1,
+//     };
+
+//     axios
+//       .post('https://test.e-prathibha.com/apis/finishExam', data, {
+//         headers: {
+//           id: id,
+//           server_key: server_key,
+//           tokenu: tokenu,
+//         },
+//       })
+//       .then((response) => {
+//         console.log(response.data);
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//       });
+//   };
+
+//   const getCurrentQuestion = () => {
+//     return questions[currentQuestionIndex];
+//   };
+
+//   const getCurrentSelectedOption = () => {
+//     return selectedOptions[currentQuestionIndex];
+//   };
+
+//   if (!Array.isArray(questions) || questions.length === 0) {
+//     return <div>Loading Question Paper</div>;
+//   }
+
+//   const currentQuestion = getCurrentQuestion();
+//   const currentSelectedOption = getCurrentSelectedOption();
+
+//   return (
+//     <div className="container">
+//       <ExamHeader />
+//       <div className="paper">
+//         <div>
+//           <b>Question</b>
+//         </div>
+//         <div className="question">
+//           <span>{currentQuestion.ExamStat.ques_no}.</span>
+//           <span>{currentQuestion.Question.question.above}</span>
+//           <div>
+//             <b>options</b>
+//           </div>
+//           <div className="options">
+//             <div onClick={() => handleOptionClick('option1')}>
+//               <input
+//                 type="radio"
+//                 name="option"
+//                 value="option1"
+//                 checked={currentSelectedOption === 'option1'}
+//               />
+//               {currentQuestion.Question.option1}
+//             </div>
+//             <div onClick={() => handleOptionClick('option2')}>
+//               <input
+//                 type="radio"
+//                 name="option"
+//                 value="option2"
+//                 checked={currentSelectedOption === 'option2'}
+//               />
+//               {currentQuestion.Question.option2}
+//             </div>
+//             <div onClick={() => handleOptionClick('option3')}>
+//               <input
+//                 type="radio"
+//                 name="option"
+//                 value="option3"
+//                 checked={currentSelectedOption === 'option3'}
+//               />
+//               {currentQuestion.Question.option3}
+//             </div>
+//             <div onClick={() => handleOptionClick('option4')}>
+//               <input
+//                 type="radio"
+//                 name="option"
+//                 value="option4"
+//                 checked={currentSelectedOption === 'option4'}
+//               />
+//               {currentQuestion.Question.option4}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div>
+//         {currentQuestionIndex > 0 && (
+//           <button onClick={handlePreviousQuestion}>Previous</button>
+//         )}
+
+//         {currentQuestionIndex < questions.length - 1 ? (      
+//           <button onClick={handleNextQuestion}>Save & Next</button>
+//         ) : (
+//           <h2>NO records Found</h2>
+//         )}
+//       </div>
+//       <div>
+//         <Link to="/FinishExam">
+//           <button onClick={handleFinishExam} className='question'>Finish Exam</button>
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Questions;
+
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link, useParams } from 'react-router-dom';
+import './Questions.css';
+import ExamHeader from '../../Header/ExamHeader';
+
+const Questions = ({ id, tokenu, server_key }) => {
+  const { examId } = useParams();
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState('');
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(
+          `https://test.e-prathibha.com/apis/start_exam?examId=${examId}`,
+          {
+            headers: {
+              id: id,
+              server_key: server_key,
+              tokenu: tokenu,
+            },
+          }
+        );
+        setQuestions(response.data.data.exam);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchQuestions();
+  }, [id, tokenu, server_key, examId]);
+
+  const handleSaveAndNext = async () => {
+    try {
+      const data = {
+        data: {
+          Exam: {
+            lang: '1',
+            option_selected: "2",
+          },
+        },
+        examId: examId,
+        qId: "1",
+      };
+
+      const response = await axios.post(
+        'https://test.e-prathibha.com/apis/save_ques',
+        data,
+        {
+          headers: {
+            tokenu: tokenu,
+            id: id,
+            server_key: server_key,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      // Move to the next question
+      if (currentQuestionIndex + 1 < questions.length) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedOption('');
+      } else {
+        // Display a message or perform any action when all questions are answered
+        console.log('All questions answered');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleFinishExam = () => {
+    const data = {
+      examId: examId,
+      qno: 1,
+    };
+
+    axios
+      .post('https://test.e-prathibha.com/apis/finishExam', data, {
+        headers: {
+          id: id,
+          server_key: server_key,
+          tokenu: tokenu,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  if (questions.length === 0 || currentQuestionIndex >= questions.length) {
+    return <div>Loading...</div>;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  return (
+    <div className="container">
+      <ExamHeader />
+      <div className="paper">
+        <div>
+          <b>Question</b>
+        </div>
+        <div className="question">
+          <span>{currentQuestion.ExamStat.ques_no}.</span>
+          <span>{currentQuestion.Question.question.above}</span>
+          <div>
+            <b>Options</b>
+          </div>
+          <div className="options">
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option1}
+                checked={selectedOption === currentQuestion.Question.option1}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option1)
+                }
+              />
+              {currentQuestion.Question.option1}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option2}
+                checked={selectedOption === currentQuestion.Question.option2}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option2)
+                }
+              />
+              {currentQuestion.Question.option2}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option3}
+                checked={selectedOption === currentQuestion.Question.option3}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option3)
+                }
+              />
+              {currentQuestion.Question.option3}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option4}
+                checked={selectedOption === currentQuestion.Question.option4}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option4)
+                }
+              />
+              {currentQuestion.Question.option4}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button onClick={handleSaveAndNext}>Save & Next</button>
+      </div>
+      <div>
+        <Link to="/FinishExam">
+          <button onClick={handleFinishExam} className="question">
+            Finish Exam
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Questions;
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link, useParams } from 'react-router-dom';
+import './Questions.css';
+import ExamHeader from '../../Header/ExamHeader';
+
+const Questions = ({ id, tokenu, server_key }) => {
+  const { examId } = useParams();
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState('');
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(
+          `https://test.e-prathibha.com/apis/start_exam?examId=${examId}`,
+          {
+            headers: {
+              id: id,
+              server_key: server_key,
+              tokenu: tokenu,
+            },
+          }
+        );
+        setQuestions(response.data.data.exam);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchQuestions();
+  }, [id, tokenu, server_key, examId]);
+
+  const handleSaveAndNext = async () => {
+    try {
+      const data = {
+        data: {
+          Exam: {
+            lang: '1',
+            option_selected: {selectedOption},
+          },
+        },
+        examId: examId,
+        qId: {currentQuestion.ExamStat.ques_no},
+      };
+
+      const response = await axios.post(
+        'https://test.e-prathibha.com/apis/save_ques',
+        data,
+        {
+          headers: {
+            tokenu: tokenu,
+            id: id,
+            server_key: server_key,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      // Move to the next question
+      if (currentQuestionIndex + 1 < questions.length) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedOption('');
+      } else {
+        // Display a message or perform any action when all questions are answered
+        console.log('All questions answered');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
+  const handleFinishExam = () => {
+    const data = {
+      examId: examId,
+      qno: 1,
+    };
+
+    axios
+      .post('https://test.e-prathibha.com/apis/finishExam', data, {
+        headers: {
+          id: id,
+          server_key: server_key,
+          tokenu: tokenu,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  if (questions.length === 0 || currentQuestionIndex >= questions.length) {
+    return <div>Loading...</div>;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  const examResultId = currentQuestion.ExamStat.exam_result_id;
+  localStorage.setItem('examResultId', examResultId);
+ 
+  return (
+    <div className="container">
+      <ExamHeader />
+      <div className="paper">
+        <div>
+          <b>Question</b>
+        </div>
+        <div className="question">
+          <span>{currentQuestion.ExamStat.ques_no}.</span>
+          <span>{currentQuestion.Question.question.above}</span>
+          <div>
+            <b>Options</b>
+          </div>
+          <div className="options">
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option1}
+                checked={selectedOption === currentQuestion.Question.option1}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option1)
+                }
+              />
+              {currentQuestion.Question.option1}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option2}
+                checked={selectedOption === currentQuestion.Question.option2}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option2)
+                }
+              />
+              {currentQuestion.Question.option2}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option3}
+                checked={selectedOption === currentQuestion.Question.option3}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option3)
+                }
+              />
+              {currentQuestion.Question.option3}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option4}
+                checked={selectedOption === currentQuestion.Question.option4}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option4)
+                }
+              />
+              {currentQuestion.Question.option4}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button onClick={handleSaveAndNext}>Save & Next</button>
+      </div>
+      <div>
+        <Link to="/FinishExam">
+          <button onClick={handleFinishExam} className="question">
+            Finish Exam
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Questions;
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link, useParams } from 'react-router-dom';
+import './Questions.css';
+import ExamHeader from '../../Header/ExamHeader';
+import { Button } from 'react-bootstrap';
+
+const Questions = ({ id, tokenu, server_key }) => {
+  const { examId } = useParams();
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState('');
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(
+          `https://test.e-prathibha.com/apis/start_exam?examId=${examId}`,
+          {
+            headers: {
+              id: id,
+              server_key: server_key,
+              tokenu: tokenu,
+            },
+          }
+        );
+        setQuestions(response.data.data.exam);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchQuestions();
+  }, [id, tokenu, server_key, examId]);
+
+  const handleSaveAndNext = async () => {
+    try {
+      const data = {
+        data: {
+          Exam: {
+            lang: '1',
+            option_selected:selectedOption,
+          },
+        },
+        examId: examId,
+        qId: currentQuestion.ExamStat.ques_no,
+      };
+
+      const response = await axios.post(
+        'https://test.e-prathibha.com/apis/save_ques',
+        data,
+        {
+          headers: {
+            tokenu: tokenu,
+            id: id,
+            server_key: server_key,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      // Move to the next question
+      if (currentQuestionIndex + 1 < questions.length) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedOption('');
+      } else {
+        // Display a message or perform any action when all questions are answered
+        console.log('All questions answered');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
+  const handleFinishExam = () => {
+    const data = {
+      examId: examId,
+      qno: 1,
+    };
+
+    axios
+      .post('https://test.e-prathibha.com/apis/finishExam', data, {
+        headers: {
+          id: id,
+          server_key: server_key,
+          tokenu: tokenu,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  if (questions.length === 0 || currentQuestionIndex >= questions.length) {
+    return <div>Loading...</div>;
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  const examResultId = currentQuestion.ExamStat.exam_result_id ;
+  localStorage.setItem('examResultId', examResultId);
+ 
+  return (
+    <div className="container">
+      <ExamHeader />
+      <div className="paper">
+        <div>
+          <b>Question</b>
+        </div>
+        <div className="question">
+          <span>{currentQuestion.ExamStat.ques_no}.</span>
+          <span>{currentQuestion.Question.question.above}</span>
+          <div>
+            <b>Options</b>
+          </div>
+          <div className="options">
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option1}
+                checked={selectedOption === currentQuestion.Question.option1}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option1)
+                }
+              />
+              {currentQuestion.Question.option1}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option2}
+                checked={selectedOption === currentQuestion.Question.option2}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option2)
+                }
+              />
+              {currentQuestion.Question.option2}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option3}
+                checked={selectedOption === currentQuestion.Question.option3}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option3)
+                }
+              />
+              {currentQuestion.Question.option3}
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="option"
+                value={currentQuestion.Question.option4}
+                checked={selectedOption === currentQuestion.Question.option4}
+                onChange={() =>
+                  setSelectedOption(currentQuestion.Question.option4)
+                }
+              />
+              {currentQuestion.Question.option4}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button onClick={handleSaveAndNext}>Save & Next</button>
+      </div>
+      <div>
+        <Link to="/FinishExam">
+          <Button onClick={handleFinishExam} className="question">
+            Finish Exam
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Questions;

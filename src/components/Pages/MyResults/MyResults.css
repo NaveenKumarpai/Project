@@ -1,0 +1,9 @@
+.naveen {
+    border:1px solid black;
+    margin: 5px;
+} 
+.line {
+    border-bottom:1px solid rgba(82, 77, 77, 0.836);
+    display: flex;
+
+}

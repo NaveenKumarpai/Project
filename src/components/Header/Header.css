@@ -1,0 +1,12 @@
+.nav-list a {
+    text-decoration: none;
+}
+Navbar {
+    background-image: url(../assests/image.jpg);
+    position: absolute;
+    background-repeat: no-repeat;
+    border: none;
+}
+@media only screen and (max-width: 767px) {
+   
+}

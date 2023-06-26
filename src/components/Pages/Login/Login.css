@@ -1,0 +1,47 @@
+@media (min-width: 992px) {
+    .text {
+      text-align: center;
+    }
+    
+    .margin {
+      margin: 10px;
+      width: 20%;
+    }
+    
+  }
+  @media (max-width: 991px) {
+    .text {
+      text-align: center;
+    }
+    
+    .margin {
+      margin: 10px;
+      width: 40%;
+    }
+
+  }
+
+  @media (max-width: 767px) {
+    .text {
+      text-align: center;
+    }
+    
+    .margin {
+      margin: 5px;
+      width: 80%;
+    }
+    
+   
+  }
+  @media (max-width: 480px) {
+    .text {
+      text-align: center;
+    }
+    
+    .margin {
+      margin: 5px;
+      width: 100%;
+    }
+   
+  }
+  
